@@ -130,7 +130,14 @@ router.post("/", async (req, res) => {
     });
   } catch (err) {
     console.error("[Jobs] Create error:", err);
-    return res.status(500).json({ error: "Failed to create job" });
+    console.error("[Jobs] Stack:", err.stack);
+    // Return detailed error in non-production for debugging
+    const detail = config.nodeEnv === "production" ? undefined : err.message;
+    return res.status(500).json({
+      error: "Failed to create job",
+      detail,
+      hint: "Check Railway logs for full stack trace",
+    });
   }
 });
 
